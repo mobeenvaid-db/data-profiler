@@ -1,0 +1,18 @@
+# Core dependencies for Databricks Apps
+requests
+python-dotenv
+
+# FastAPI and server
+fastapi
+uvicorn[standard]
+gunicorn
+
+# Data validation
+pydantic
+
+# Excel export
+openpyxl
+
+# Note: pandas is pre-installed in Databricks Apps environment
+# Note: Using REST API (requests) instead of databricks-sql-connector
+
