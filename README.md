@@ -1,359 +1,484 @@
 # Databricks Data Profiler
 
-A comprehensive, enterprise-grade data profiling application for Databricks that provides deep insights into data quality, completeness, and patterns.
+A comprehensive, enterprise-grade data profiling application for Databricks that provides deep insights into data quality, completeness, patterns, and relationships across your data assets.
 
 ## 🎯 Overview
 
-The Databricks Data Profiler helps data science and analytics teams understand their data quality by analyzing fields across catalogs, schemas, and tables. It provides interactive visualizations, detailed metrics, and exportable reports.
+The Databricks Data Profiler is a full-stack application built specifically for Databricks Apps, helping data science and analytics teams understand their data quality through intelligent profiling, AI-powered insights, and advanced analytics. Profile data across catalogs, schemas, and tables with interactive visualizations, detailed metrics, and exportable reports.
 
-## ✨ Features
+## ✨ Key Features
 
 ### 📊 Executive Summary Dashboard
 - **8 Key Metrics**: Total Columns, Total Rows, Issues Found, Completeness %, Quality Score, High Cardinality Count, Date Columns, Empty Columns
-- Real-time calculations based on profiling data
-- Visual metric cards with icons
+- Real-time calculations with visual metric cards
+- Type distribution chart (Integer, String, Date, Other)
+- Quality overview panel (Excellent, Good, Needs Attention)
 
-### 📈 Rich Visualizations
-- **Type Distribution Chart**: Visual breakdown of Integer, String, Date, and Other types with percentage bars
-- **Quality Overview Panel**: Categorized into Excellent (95-100%), Good (80-94%), and Needs Attention (<80%)
-- Color-coded progress bars and quality indicators
+### 📈 Comprehensive Column Profiling
 
-### 📋 Comprehensive Column Analysis
-Each column shows:
-- Column name with visual badges (High Nulls, Has Nulls, High Cardinality)
-- Inferred type with confidence % + documented schema type
-- Unique values (count + percentage)
-- Uniqueness progress bar
-- Null count + percentage
-- Completeness progress bar (color-coded: green/yellow/red)
-- Quality score out of 100
-- Details button for deep dive
+#### Type-Aware Analysis
+- **String Fields**: Length statistics (min/max/median), pattern detection, categorical value distributions
+- **Numerical Fields**: Min/Max/Mean/Median/StdDev, percentiles (25th, 75th, 95th, 99th), zeros/negatives/infinites count
+- **Temporal Fields**: Day-of-week histograms, hour-of-day distributions, time series analysis
+- **All Types**: Completeness, uniqueness, null analysis, quality scoring
 
-### 🔍 Advanced Column Detail Modal (4 Tabs)
+#### Value Analysis
+- Full value distributions (not just top 3)
+- Frequency analysis with percentages
+- Extreme values (smallest and largest)
+- Sample values (first rows and random samples)
 
-#### 1. Overview Tab
-- Inferred vs Documented type comparison
-- Unique values, Null values, Average length metrics
-- Min/Max value range display
+#### Pattern Detection
+- Automatic pattern recognition (emails, phone numbers, IDs, codes)
+- Pattern explanations (# = digit, A = letter, etc.)
+- Mixed pattern detection with detailed breakdowns
 
-#### 2. Statistics Tab
-- Cardinality analysis (total rows, unique values, duplicates, uniqueness %)
-- Completeness metrics with visual bars
-- Top 3 most frequent values with counts and percentages
+### 🔍 Advanced Column Detail Modal (7 Tabs)
 
-#### 3. Patterns Tab
-- Detected data patterns (e.g., "########" for 8-digit numbers, "AAA" for 3-letter codes)
-- Pattern legend explaining symbols (# = digit, A = letter, etc.)
+1. **Overview**: Type comparison, basic metrics, value ranges
+2. **Statistics**: Cardinality, completeness, full value distributions with smart visualizations
+3. **Extreme Values**: Smallest and largest values for quick anomaly detection
+4. **Samples**: First rows and random samples for data verification
+5. **Patterns**: Detected patterns with explanations and frequency counts
+6. **Quality**: Detailed quality scoring with actionable recommendations
+7. **Visualizations**: Advanced charts (box plots, word clouds, temporal analysis)
+8. **AI Insights**: LLM-powered analysis and recommendations
 
-#### 4. Quality Tab
-- Overall quality score (large, color-coded)
-- Detailed quality factors: Completeness, Type Consistency, Schema Alignment
-- Contextual assessment with recommendations
+### 🤖 AI-Powered Features
+
+#### AI Insights (Databricks Foundation Models)
+- Natural language analysis of column profiles
+- Actionable recommendations for data quality improvement
+- Uses `databricks-gemma-3-12b` model
+- Intelligent fallback to rule-based insights
+
+#### Cross-Column Analysis
+- **Correlation Matrix**: Heatmap showing relationships between numerical columns
+- **Composite Key Detection**: Automatic identification of potential primary keys
+- **Conditional Profiling**: Segment analysis (e.g., statistics by category)
+
+#### Profile Snapshots & Comparison
+- Save profile snapshots for historical tracking
+- Side-by-side snapshot comparison with delta analysis
+- Persistent storage across app restarts
+- Multi-worker safe with filesystem-based storage
+
+### 📊 Advanced Visualizations
+
+- **Box Plots**: Statistical distribution visualization for numerical data
+- **Word Clouds**: Visual representation of text field values
+- **Time Series**: Temporal pattern analysis with interactive charts
+- **Correlation Heatmaps**: Multi-column relationship visualization
+- **Bar Charts**: Intelligent orientation (vertical for numerical, horizontal for categorical)
+- **Histograms**: Day-of-week and hour-of-day distributions
 
 ### 🎨 Interactive Features
-- Smart search by column name
-- Quick filters: All, Issues, Dates, Strings, Numbers
-- Hover effects and smooth transitions
-- Re-Profile and Export Report buttons
-- Multi-table field selection
-- Hierarchical catalog/schema/table browser
+
+- **Smart Search**: Filter columns by name
+- **Quick Filters**: All, Issues, Dates, Strings, Numbers
+- **Resizable Columns**: Click and drag to adjust column widths
+- **Show/Hide Columns**: Customize table view
+- **Real-time Progress**: Visual feedback during profiling and analysis
+- **Multi-table Selection**: Profile fields across different tables
+- **Hierarchical Browser**: Navigate catalogs → schemas → tables → columns
+
+### 📤 Export Capabilities
+
+#### Multi-Sheet Excel Export
+- **Summary Sheet**: High-level metrics and statistics
+- **Detailed Sheet**: Complete column-by-column analysis
+- **Patterns Sheet**: Data pattern detection results
+- **Quality Sheet**: Quality scores and recommendations
+
+Fallback to multi-CSV export if Excel generation fails.
 
 ## 🏗️ Architecture
 
-### Frontend
+### Full-Stack Databricks App
+
 ```
 data_profiler_app/
-├── app.tsx                      # Main application component
-├── index.tsx                    # Entry point
-├── data_profiling_ui.tsx        # Dashboard UI component
-├── components/
-│   └── DataSelector.tsx         # Catalog/Schema/Table/Field selector
-├── services/
-│   └── profilingService.ts      # Profiling execution and export
-├── utils/
-│   └── sqlProfiler.ts           # SQL query generation
-└── styles.css                   # Tailwind styles
+├── Frontend (React + TypeScript)
+│   ├── app.tsx                          # Main application
+│   ├── index.tsx                        # Entry point
+│   ├── data_profiling_ui.tsx           # Dashboard UI
+│   ├── components/
+│   │   ├── DataSelector.tsx            # Catalog browser
+│   │   ├── AdvancedVisualizations.tsx  # Charts & graphs
+│   │   ├── AIInsightsAndComparison.tsx # AI & snapshots
+│   │   └── CrossColumnAnalysis.tsx     # Correlation & keys
+│   ├── services/
+│   │   └── profilingService.ts         # API integration
+│   └── utils/
+│       └── sqlProfiler.ts              # SQL generation
+│
+├── Backend (FastAPI + Python)
+│   ├── databricks_app.py               # Main API server
+│   ├── app.yaml                        # Databricks Apps config
+│   └── requirements.txt                # Python dependencies
+│
+└── Deployment
+    └── client/build/                   # Compiled React app
 ```
 
 ### Technology Stack
-- **React 18**: Modern React with hooks
+
+#### Frontend
+- **React 18**: Modern React with hooks and concurrent features
 - **TypeScript**: Type-safe development
 - **Tailwind CSS**: Utility-first styling
 - **Lucide React**: Beautiful, consistent icons
-- **Vite**: Fast build tool and dev server
+- **Recharts**: Responsive charts and graphs
+- **React-Wordcloud**: Word cloud visualizations
+- **Vite**: Lightning-fast build tool
+
+#### Backend
+- **FastAPI**: High-performance Python web framework
+- **Databricks SDK**: Native Databricks integration
+- **Uvicorn**: ASGI server for production
+- **Gunicorn**: Process manager with multiple workers
+- **OpenPyxl**: Excel file generation
+
+#### Data Layer
+- **Databricks SQL Warehouses**: Query execution
+- **Unity Catalog**: Metadata access via `system.information_schema`
+- **SQL Statements API**: Asynchronous query execution
+- **Filesystem Storage**: Multi-worker snapshot persistence
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js >= 16.0.0
-- npm >= 8.0.0
-- Databricks workspace with SQL access
+- Databricks workspace
+- SQL Warehouse configured
+- Node.js >= 18.0.0
+- Python >= 3.11
+- npm >= 9.0.0
 
-### Installation
+### Local Development
 
 ```bash
-# Install dependencies
+# Install frontend dependencies
 npm install
+
+# Install backend dependencies
+pip install -r requirements.txt
 
 # Start development server
 npm run dev
 
 # Build for production
 npm run build
-
-# Preview production build
-npm run preview
 ```
 
-The app will be available at `http://localhost:3000`
+### Databricks Deployment
 
-## 🔌 Databricks Integration
-
-### SQL Query Generation
-
-The profiler generates optimized SQL queries for Databricks:
-
-```typescript
-import { generateProfilingQueries } from './utils/sqlProfiler';
-
-const queries = generateProfilingQueries([
-  {
-    catalog: 'main',
-    schema: 'healthcare',
-    table: 'h_mbr_rel',
-    field: 'mbr_rel_sk',
-    dataType: 'bigint'
-  }
-]);
+#### 1. Build the Frontend
+```bash
+cd <your-local-path>/data_profiler_app
+npm install
+npm run build
 ```
 
-### Query Features
-- **CTEs for Performance**: Uses Common Table Expressions for efficient execution
-- **Window Functions**: Leverages Databricks SQL window functions
-- **Pattern Detection**: Identifies data patterns using REGEXP_LIKE
-- **Type Inference**: Automatically detects actual data types
-- **Frequency Analysis**: Calculates top values and distributions
-- **Null Analysis**: Comprehensive null value detection
+This creates `client/build/` with the compiled React app.
 
-### Example Generated Query
+#### 2. Deploy to Databricks
 
-```sql
-WITH base_stats AS (
-  SELECT
-    COUNT(*) as total_rows,
-    COUNT(mbr_rel_sk) as non_null_count,
-    COUNT(*) - COUNT(mbr_rel_sk) as null_count,
-    COUNT(DISTINCT mbr_rel_sk) as unique_count
-  FROM main.healthcare.h_mbr_rel
-),
-value_frequencies AS (
-  SELECT
-    mbr_rel_sk as field_value,
-    COUNT(*) as frequency,
-    ROW_NUMBER() OVER (ORDER BY COUNT(*) DESC) as rank
-  FROM main.healthcare.h_mbr_rel
-  WHERE mbr_rel_sk IS NOT NULL
-  GROUP BY mbr_rel_sk
-  LIMIT 10
-),
-type_inference AS (
-  SELECT
-    CASE
-      WHEN mbr_rel_sk IS NULL THEN 'NULL'
-      ELSE 'BIGINT'
-    END as inferred_type,
-    COUNT(*) as type_count
-  FROM main.healthcare.h_mbr_rel
-  GROUP BY 1
-  ORDER BY type_count DESC
-  LIMIT 1
-)
-SELECT * FROM base_stats CROSS JOIN type_inference;
+```bash
+# Create deployment package
+mkdir -p deploy_tmp/client
+cp databricks_app.py app.yaml requirements.txt deploy_tmp/
+cp -r client/build deploy_tmp/client/
+
+# Upload to Databricks workspace
+databricks workspace import-dir deploy_tmp /Workspace/Users/<your.email@company.com>/data-profiling-app --overwrite
+
+# Clean up
+rm -rf deploy_tmp
 ```
 
-### Backend API Integration
+#### 3. Deploy as Databricks App
 
-To connect to Databricks, implement the backend API endpoint:
+In Databricks workspace:
+1. Go to **Apps** → **Create App**
+2. Select source: `/Workspace/Users/your.email@company.com/data-profiling-app`
+3. Choose SQL Warehouse
+4. Click **Create**
 
-```typescript
-// Backend API endpoint (Python/Node.js)
-// POST /api/databricks/execute
+The app will be available at `https://your-app.cloud.databricks.com`
 
-import { DatabricksSQL } from '@databricks/sql';
+## 📝 Configuration
 
-async function executeProfilingQueries(queries) {
-  const client = new DatabricksSQL({
-    host: process.env.DATABRICKS_HOST,
-    path: process.env.DATABRICKS_HTTP_PATH,
-    token: process.env.DATABRICKS_TOKEN
-  });
+### app.yaml
 
-  const results = [];
-  for (const query of queries) {
-    const result = await client.execute(query.query);
-    results.push(result);
-  }
+```yaml
+command: ["uvicorn", "databricks_app:api_app", "--host", "0.0.0.0", "--port", "8000"]
 
-  return results;
-}
+resources:
+  - name: main_sql_warehouse
+    description: SQL warehouse for profiling queries
+    sql_warehouse:
+      permission: CAN_USE
+
+env:
+  - name: SQL_WAREHOUSE_ID
+    value: "{{resources.main_sql_warehouse.id}}"
 ```
 
 ### Environment Variables
 
-Create a `.env` file:
+The app automatically uses:
+- `SQL_WAREHOUSE_ID`: From app.yaml resources
+- OAuth tokens: Managed by Databricks Apps runtime
 
-```env
-DATABRICKS_HOST=your-workspace.cloud.databricks.com
-DATABRICKS_HTTP_PATH=/sql/1.0/warehouses/your-warehouse-id
-DATABRICKS_TOKEN=your-access-token
+## 🔌 API Endpoints
+
+### Metadata Endpoints
+- `GET /api/catalogs` - List available catalogs
+- `GET /api/schemas` - List schemas in a catalog
+- `GET /api/tables` - List tables in a schema
+- `GET /api/columns` - List columns in a table
+
+### Profiling Endpoints
+- `POST /api/databricks/execute` - Execute profiling queries
+- `POST /api/databricks/execute-stream` - Execute with real-time progress (SSE)
+- `POST /api/export/excel` - Generate multi-sheet Excel export
+
+### Cross-Column Analysis
+- `POST /api/cross-column/correlations` - Calculate correlation matrix
+- `POST /api/cross-column/composite-keys` - Detect composite key candidates
+- `POST /api/cross-column/conditional-profiling` - Segment analysis
+
+### AI & Insights
+- `POST /api/ai/generate-insights` - Generate AI-powered insights
+- `POST /api/temporal/analyze` - Analyze temporal patterns
+
+### Snapshot Management
+- `POST /api/snapshots/save` - Save profile snapshot
+- `GET /api/snapshots/list` - List all snapshots
+- `GET /api/snapshots/{id}` - Get specific snapshot
+- `DELETE /api/snapshots/{id}` - Delete snapshot
+- `POST /api/snapshots/compare` - Compare two snapshots
+
+## 📊 SQL Query Generation
+
+### Intelligent Type-Aware Profiling
+
+The profiler generates optimized SQL queries tailored to each data type:
+
+#### For String Fields
+```sql
+WITH base_stats AS (
+  SELECT
+    COUNT(*) as total_rows,
+    COUNT(column_name) as non_null_count,
+    COUNT(DISTINCT column_name) as unique_count,
+    AVG(LENGTH(CAST(column_name AS STRING))) as avg_length,
+    MIN(LENGTH(CAST(column_name AS STRING))) as min_length,
+    MAX(LENGTH(CAST(column_name AS STRING))) as max_length,
+    PERCENTILE(LENGTH(CAST(column_name AS STRING)), 0.50) as median_length
+  FROM catalog.schema.table
+),
+value_analysis AS (
+  SELECT 
+    COLLECT_LIST(column_name) as all_values,
+    -- Pattern detection, frequency analysis
+  FROM catalog.schema.table
+)
+SELECT * FROM base_stats CROSS JOIN value_analysis;
 ```
 
-## 📤 Export Capabilities
-
-### CSV Export Formats
-
-The profiler supports multiple export formats:
-
-#### 1. Single Detailed CSV
-All profiling data in one comprehensive file.
-
-#### 2. Multi-Sheet Export
-Four separate CSV files mimicking Excel sheets:
-- **Summary**: High-level metrics and statistics
-- **Detailed**: Complete column-by-column analysis
-- **Patterns**: Data pattern detection results
-- **Quality**: Quality scores and issues
-
-### Export Usage
-
-```typescript
-import { downloadMultiSheetExport } from './services/profilingService';
-
-// Export all sheets
-downloadMultiSheetExport(profileResult);
-
-// Files generated:
-// - Profile_H_MBR_REL_Summary_2024-01-05.csv
-// - Profile_H_MBR_REL_Detailed_2024-01-05.csv
-// - Profile_H_MBR_REL_Patterns_2024-01-05.csv
-// - Profile_H_MBR_REL_Quality_2024-01-05.csv
+#### For Numerical Fields
+```sql
+WITH base_stats AS (
+  SELECT
+    COUNT(*) as total_rows,
+    COUNT(column_name) as non_null_count,
+    MIN(column_name) as min_value,
+    MAX(column_name) as max_value,
+    AVG(column_name) as mean_value,
+    STDDEV(column_name) as stddev_value,
+    PERCENTILE(column_name, 0.25) as p25_value,
+    PERCENTILE(column_name, 0.50) as median_value,
+    PERCENTILE(column_name, 0.75) as p75_value,
+    COUNT(CASE WHEN column_name = 0 THEN 1 END) as zeros_count,
+    COUNT(CASE WHEN column_name < 0 THEN 1 END) as negatives_count
+  FROM catalog.schema.table
+)
+SELECT * FROM base_stats;
 ```
 
-## 📊 Quality Scoring
-
-The profiler calculates a comprehensive quality score (0-100) based on:
-
-### Quality Factors
-1. **Completeness** (up to -40 points penalty)
-   - Based on null percentage
-   - 0% nulls = no penalty
-   - High null rates significantly reduce score
-
-2. **Uniqueness** (up to -15 points penalty)
-   - For fields expected to have high cardinality
-   - Low uniqueness in large cardinality fields = penalty
-
-3. **Type Consistency** (up to -25 points penalty)
-   - How well values match inferred type
-   - 100% consistency = no penalty
-
-4. **Schema Alignment** (-20 points penalty)
-   - Whether inferred type matches documented type
-   - Mismatch indicates potential data quality issues
-
-### Quality Score Ranges
-- **95-100**: Excellent - Minimal issues, meets all quality standards
-- **80-94**: Good - Some areas for improvement
-- **< 80**: Needs Attention - Significant data quality issues
+### Performance Features
+- **Common Table Expressions (CTEs)**: Efficient query organization
+- **Window Functions**: Leverage Spark SQL capabilities
+- **Sampling Support**: Handle large datasets gracefully
+- **Incremental Loading**: Fetch metadata on-demand
+- **Streaming Progress**: Real-time feedback with Server-Sent Events
 
 ## 🎯 Use Cases
 
-### Data Quality Assessment
-Profile tables before using them in analytics to understand completeness and quality.
+### 1. Data Quality Assessment
+Profile tables before using them in analytics pipelines to understand completeness, accuracy, and consistency.
 
-### Schema Validation
-Verify that actual data matches documented schema types.
+### 2. Schema Validation
+Verify that actual data matches documented schema types, catching type mismatches early.
 
-### Migration Validation
-Profile data before and after migrations to ensure data integrity.
+### 3. Migration Validation
+Profile data before and after migrations to ensure data integrity and catch regressions.
 
-### Compliance Auditing
-Document data completeness for compliance requirements.
+### 4. Compliance & Auditing
+Document data completeness and quality for compliance requirements (SOX, GDPR, HIPAA).
 
-### Pattern Detection
-Identify data formats and patterns for data standardization efforts.
+### 5. Pattern Detection & Standardization
+Identify data formats and patterns across systems for standardization efforts.
 
-### Anomaly Detection
-Find columns with unexpected null rates or cardinality.
+### 6. Anomaly Detection
+Find columns with unexpected null rates, cardinality, or value distributions.
 
-## 🔧 Customization
+### 7. Cross-Column Relationships
+Discover hidden correlations and composite key candidates for data modeling.
 
-### Adding Custom Metrics
+### 8. Historical Tracking
+Save snapshots over time to track data quality trends and measure improvements.
 
-Edit `utils/sqlProfiler.ts` to add custom profiling logic:
+## 🔧 Advanced Features
+
+### Multi-Worker Architecture
+
+The app runs with multiple gunicorn workers for performance. Snapshots use filesystem-based storage (`/tmp/databricks_profiler_snapshots/`) to ensure consistency across workers.
+
+### Real-Time Progress Tracking
+
+Server-Sent Events (SSE) provide real-time updates during long-running profiling operations:
 
 ```typescript
-export function generateCustomMetricQuery(
-  catalog: string,
-  schema: string,
-  table: string,
-  field: string
-): string {
-  return `
-    SELECT
-      '${field}' as column_name,
-      -- Add your custom metrics here
-      COUNT(DISTINCT CASE WHEN ${field} LIKE '%test%' THEN ${field} END) as test_value_count
-    FROM ${catalog}.${schema}.${table}
-  `;
+// Frontend automatically consumes SSE
+{
+  "current": 3,
+  "total": 10,
+  "percentage": 30,
+  "fieldKey": "catalog.schema.table.column",
+  "description": "Profiling numerical column..."
 }
 ```
 
-### Styling Customization
+### Intelligent Chart Selection
 
-Modify `tailwind.config.js` for custom themes:
+The UI automatically selects appropriate visualizations based on data types:
+- **Numerical**: Vertical bar charts, box plots, histograms
+- **Categorical**: Horizontal bar charts, word clouds
+- **Temporal**: Time series, day-of-week, hour-of-day charts
 
-```javascript
-theme: {
-  extend: {
-    colors: {
-      primary: {
-        // Your custom color palette
-      },
-    },
-  },
-}
-```
+### Auto-Sizing Columns
+
+Table columns auto-size to content with minimum widths, preventing text overlap while remaining manually resizable.
+
+## 📊 Quality Scoring Algorithm
+
+Quality scores (0-100) are calculated based on multiple factors:
+
+### Scoring Components
+
+1. **Completeness** (up to -30 points)
+   - 0% nulls = 100 points
+   - Each % of nulls reduces score proportionally
+
+2. **Uniqueness** (-5 points)
+   - Applies to high-cardinality fields
+   - Penalty for unexpectedly low uniqueness
+
+3. **Type Consistency** (-10 points)
+   - Inferred type vs documented type mismatch
+
+### Quality Ranges
+- **95-100** (Excellent): Production-ready, minimal issues
+- **80-94** (Good): Acceptable with minor improvements needed
+- **< 80** (Needs Attention): Significant data quality issues require investigation
 
 ## 🐛 Troubleshooting
 
 ### Common Issues
 
-**Issue**: Queries timing out
-**Solution**: Implement sampling for large tables, modify `samplingPolicy` in `sqlProfiler.ts`
+**Issue**: Queries timing out on large tables
+**Solution**: The app auto-limits value collection. For very large tables (>100M rows), consider sampling.
 
-**Issue**: Type inference incorrect
-**Solution**: Adjust regex patterns in `generateSingleFieldProfilingQuery`
+**Issue**: Snapshots not persisting
+**Solution**: Snapshots are stored in `/tmp/` and survive app deploys but not server reboots. For production, consider database storage.
 
-**Issue**: Memory issues with large datasets
-**Solution**: Process queries in batches, implement pagination
+**Issue**: "No column metadata in manifest" warnings
+**Solution**: These are debug messages. The app handles both dictionary and array result formats automatically.
+
+**Issue**: Cross-column analysis shows 404
+**Solution**: Ensure snapshots are loaded from disk. The app auto-reloads before comparison.
+
+**Issue**: AI insights timeout
+**Solution**: AI insights use Foundation Models API. Ensure your workspace has access to `databricks-gemma-3-12b`.
+
+### Debug Mode
+
+Check app logs in Databricks for detailed debugging:
+- Snapshot operations: `✅ Saved snapshot...`, `📋 Listing snapshots...`
+- API calls: `🔍 Comparing snapshots...`, `💾 Persisted snapshot...`
+- Progress: Real-time SSE events logged
 
 ## 📝 Best Practices
 
-1. **Start with Sampling**: For tables > 100M rows, use sampling
-2. **Batch Processing**: Profile 10-20 fields at a time for best performance
-3. **Cache Results**: Store profiling results to avoid repeated scans
-4. **Schedule Regular Profiling**: Set up automated profiling jobs
-5. **Export and Archive**: Keep historical profiling data for trend analysis
+### For Best Performance
+1. **Profile in Batches**: Profile 10-20 columns at a time
+2. **Use Filters**: Filter to specific data types before profiling
+3. **Monitor Progress**: Real-time progress shows execution status
+4. **Export Results**: Save Excel reports for offline analysis
+
+### For Data Quality
+1. **Regular Profiling**: Schedule weekly or monthly profiling runs
+2. **Track Snapshots**: Save snapshots to monitor quality trends
+3. **Use AI Insights**: Review AI recommendations for each column
+4. **Cross-Column Analysis**: Check correlations before modeling
+5. **Quality Thresholds**: Set organizational standards (e.g., min 95% completeness)
+
+### For Multi-User Environments
+1. **Shared Snapshots**: Use descriptive snapshot names with dates
+2. **Export Before Analysis**: Download Excel reports for team sharing
+3. **Document Findings**: Use AI insights as starting point for documentation
 
 ## 🤝 Contributing
 
-We welcome contributions! Please follow these guidelines:
+We welcome contributions! Areas for enhancement:
+- Additional chart types and visualizations
+- More pattern detection rules
+- Custom quality scoring algorithms
+- Database-backed snapshot storage
+- Scheduled profiling jobs
+- Integration with data catalogs
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes with tests
-4. Submit a pull request
+## 🗺️ Roadmap
+
+- [x] Type-aware profiling (Phase 1)
+- [x] Enhanced statistics (Phase 2)
+- [x] Advanced modal organization (Phase 3)
+- [x] AI-powered insights
+- [x] Cross-column analysis
+- [x] Profile snapshots and comparison
+- [x] Advanced visualizations
+- [x] Real-time progress tracking
+- [x] Multi-sheet Excel export
+- [x] Resizable/hideable columns
+- [ ] Database-backed snapshot storage
+- [ ] Real-time profiling with streaming data
+- [ ] Historical trend dashboards
+- [ ] Scheduled profiling jobs
+- [ ] API for programmatic access
+- [ ] Multi-workspace support
+- [ ] Custom rule engine
+
+## 📚 Additional Resources
+
+- [Databricks Apps Documentation](https://docs.databricks.com/dev-tools/databricks-apps/index.html)
+- [Databricks SQL Documentation](https://docs.databricks.com/sql/index.html)
+- [Unity Catalog Documentation](https://docs.databricks.com/data-governance/unity-catalog/index.html)
+- [Foundation Models API](https://docs.databricks.com/machine-learning/foundation-models/index.html)
+- [React Documentation](https://react.dev)
+- [FastAPI Documentation](https://fastapi.tiangolo.com)
+- [Tailwind CSS Documentation](https://tailwindcss.com)
 
 ## 📄 License
 
@@ -362,29 +487,23 @@ MIT License - see LICENSE file for details
 ## 🙋 Support
 
 For questions or issues:
-- Open an issue on GitHub
-- Contact the data engineering team
-- Check Databricks documentation
+- Check app logs in Databricks Apps console
+- Review console logs in browser DevTools (F12)
+- Verify SQL Warehouse is configured and accessible
+- Ensure Unity Catalog access permissions
 
-## 🗺️ Roadmap
+## 🏆 Features That Set This Apart
 
-- [ ] Real-time profiling with streaming data
-- [ ] ML-powered anomaly detection
-- [ ] Historical trend analysis
-- [ ] Integration with data catalogs
-- [ ] Custom rule engine for quality checks
-- [ ] Scheduled profiling jobs
-- [ ] API for programmatic access
-- [ ] Multi-language support
-
-## 📚 Additional Resources
-
-- [Databricks SQL Documentation](https://docs.databricks.com/sql/index.html)
-- [React Documentation](https://react.dev)
-- [Tailwind CSS Documentation](https://tailwindcss.com)
-- [Data Profiling Best Practices](https://example.com/best-practices)
+- **Native Databricks Integration**: Built specifically for Databricks Apps
+- **Multi-Worker Safe**: Filesystem-based snapshot storage
+- **AI-Powered**: Uses Foundation Models for intelligent insights
+- **Type-Aware**: Different profiling strategies for different data types
+- **Real-Time Feedback**: SSE-based progress tracking
+- **Production-Ready**: Handles large-scale data with optimized SQL
+- **Enterprise UX**: Resizable columns, export options, snapshot comparison
 
 ---
 
-**Built with ❤️ for Data Teams**
+**Built with ❤️ for Data Teams Using Databricks**
 
+*Comprehensive data profiling made simple, scalable, and intelligent.*
