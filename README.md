@@ -148,8 +148,13 @@ data_profiler_app/
 ## 🚀 Getting Started
 
 ### Prerequisites
+
+**For Deployment Only:**
 - Databricks workspace
 - SQL Warehouse configured
+- Databricks CLI configured
+
+**For Development (if modifying code):**
 - Node.js >= 18.0.0
 - Python >= 3.11
 - npm >= 9.0.0
@@ -172,16 +177,9 @@ npm run build
 
 ### Databricks Deployment
 
-#### 1. Build the Frontend
-```bash
-cd <your-local-path>/data_profiler_app
-npm install
-npm run build
-```
+> **Quick Deploy**: Pre-built frontend files are included in `client/build/`. You can deploy directly without Node.js!
 
-This creates `client/build/` with the compiled React app.
-
-#### 2. Deploy to Databricks
+#### Deploy to Databricks
 
 ```bash
 # Create deployment package
@@ -205,6 +203,18 @@ In Databricks workspace:
 4. Click **Create**
 
 The app will be available at `https://your-app.cloud.databricks.com`
+
+#### Rebuilding Frontend (Optional)
+
+**Only required if you modify React components or styles:**
+
+```bash
+cd <your-local-path>/data_profiler_app
+npm install  # First time only
+npm run build
+```
+
+This regenerates the `client/build/` directory with your changes. Then redeploy using the steps above.
 
 ## 📝 Configuration
 

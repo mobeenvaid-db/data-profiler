@@ -1,26 +1,14 @@
 # Quick Deployment Guide
 
-## 🚀 Deploy in 3 Steps
+## 🚀 Deploy in 2 Steps (No Build Required!)
 
-### Step 1: Build Frontend
-```bash
-cd <your-local-path>/data_profiler_app
-npm install  # Only needed first time
-npm run build
-```
+> **✨ Pre-Built & Ready**: The `client/build/` directory is committed to the repository with pre-compiled React assets. Deploy immediately without installing Node.js, npm, or any frontend dependencies!
 
-**Expected Output**:
-```
-✓ 1363 modules transformed.
-client/build/index.html                         0.63 kB
-client/build/assets/index-*.css                 51.78 kB
-client/build/assets/icons-*.js                  10.35 kB
-client/build/assets/index-*.js                  59.22 kB
-client/build/assets/react-vendor-*.js          140.92 kB
-✓ built in 10.06s
-```
+### Prerequisites
+- Databricks CLI configured (`databricks auth login`)
+- That's it! No Node.js or Python needed locally.
 
-### Step 2: Deploy to Databricks Workspace
+### Step 1: Deploy to Databricks Workspace
 ```bash
 # Create temp deployment directory
 mkdir -p deploy_tmp/client
@@ -38,7 +26,7 @@ rm -rf deploy_tmp
 echo "✅ Deployed successfully!"
 ```
 
-### Step 3: Create/Update Databricks App
+### Step 2: Create/Update Databricks App
 
 **First Time Setup:**
 1. Go to Databricks workspace UI
@@ -49,7 +37,38 @@ echo "✅ Deployed successfully!"
 6. Click **Create**
 
 **Subsequent Updates:**
-The app will automatically redeploy when you run Step 2. Just refresh your browser.
+The app will automatically redeploy when you run Step 1. Just refresh your browser.
+
+---
+
+## 🔨 Building from Source (Optional)
+
+**Only needed if you modify the frontend code!**
+
+If you make changes to React components, you'll need to rebuild:
+
+```bash
+cd <your-local-path>/data_profiler_app
+
+# Install dependencies (first time only)
+npm install
+
+# Build the frontend
+npm run build
+```
+
+**Expected Output**:
+```
+✓ 1363 modules transformed.
+client/build/index.html                         0.63 kB
+client/build/assets/index-*.css                 51.78 kB
+client/build/assets/icons-*.js                  10.35 kB
+client/build/assets/index-*.js                  59.22 kB
+client/build/assets/react-vendor-*.js          140.92 kB
+✓ built in 10.06s
+```
+
+Then deploy using Step 1 above.
 
 ---
 
@@ -173,15 +192,39 @@ Look for:
 
 ## 🔄 Deployment Workflow
 
+### Quick Deploy (Pre-Built Files)
 ```
 ┌─────────────────┐
-│  Edit Code      │
+│  Clone Repo     │  ← Get the code (client/build/ included!)
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Deploy Command │  ← Uploads files to workspace
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  App Starts     │  ← Databricks runs the app
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐
+│  Open in Browser│  ← Start profiling!
+└─────────────────┘
+```
+
+### Development Workflow (Modifying Code)
+```
+┌─────────────────┐
+│  Edit Code      │  ← Modify React/Python files
 │  (locally)      │
 └────────┬────────┘
          │
          ▼
 ┌─────────────────┐
-│  npm run build  │  ← Compiles React to client/build/
+│  npm run build  │  ← Only if you changed frontend
+│  (optional)     │     Skip for Python-only changes
 └────────┬────────┘
          │
          ▼
@@ -205,11 +248,12 @@ Look for:
 
 ## 💡 Pro Tips
 
-1. **No Need to Rebuild Frontend** if only changing Python code
-2. **Snapshots Persist** across deploys (stored in `/tmp/`)
-3. **Multiple Workers** are handled automatically
-4. **Real-Time Logs** available in Databricks Apps console
-5. **Browser Cache**: Hard refresh (Cmd+Shift+R) if UI doesn't update
+1. **✨ Pre-Built & Ready**: Users can deploy directly from the repo without Node.js!
+2. **No Need to Rebuild Frontend** if only changing Python code
+3. **Snapshots Persist** across deploys (stored in `/tmp/`)
+4. **Multiple Workers** are handled automatically
+5. **Real-Time Logs** available in Databricks Apps console
+6. **Browser Cache**: Hard refresh (Cmd+Shift+R) if UI doesn't update
 
 ---
 

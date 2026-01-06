@@ -17,16 +17,15 @@ A **complete, enterprise-grade data profiling application** built specifically f
 
 ---
 
-## 🚀 Quick Start (3 Steps)
+## 🚀 Quick Start (2 Steps)
 
-### Step 1: Build Frontend
-```bash
-cd <your-local-path>/data_profiler_app
-npm install  # First time only
-npm run build
-```
+> **✨ Zero Build Setup!** Pre-built frontend files are committed in `client/build/`. Just clone and deploy - no Node.js, npm, or frontend tooling required!
 
-### Step 2: Deploy to Databricks
+### Prerequisites
+- Databricks CLI configured
+- Git (to clone the repository)
+
+### Step 1: Deploy to Databricks
 ```bash
 mkdir -p deploy_tmp/client && \
 cp databricks_app.py app.yaml requirements.txt deploy_tmp/ && \
@@ -36,7 +35,7 @@ rm -rf deploy_tmp && \
 echo "✅ Deployed!"
 ```
 
-### Step 3: Create App (First Time Only)
+### Step 2: Create App (First Time Only)
 1. Go to **Databricks workspace** → **Apps**
 2. Click **Create App**
 3. Source: `/Workspace/Users/<your.email@company.com>/data-profiling-app`
@@ -45,7 +44,7 @@ echo "✅ Deployed!"
 
 **That's it!** Your app is live at `https://your-app.cloud.databricks.com` 🎊
 
-For subsequent updates, just run Steps 1-2 and refresh your browser!
+For subsequent updates, just run Step 1 and refresh your browser!
 
 ---
 
@@ -282,11 +281,23 @@ Click **"Export Excel"** to download multi-sheet report with:
 ## 🎯 Common Tasks
 
 ### Update the App
+
+**Backend Changes Only** (Python):
 ```bash
-# Make code changes, then:
-npm run build  # If you changed frontend
-# Deploy (same command as initial deployment)
-[deployment command from step 2 above]
+# Just deploy - no build needed!
+[deployment command from step 1 above]
+# Refresh browser to see changes
+```
+
+**Frontend Changes** (React/TypeScript):
+```bash
+# First, rebuild the frontend
+cd <your-local-path>/data_profiler_app
+npm install  # First time only
+npm run build
+
+# Then deploy
+[deployment command from step 1 above]
 # Refresh browser to see changes
 ```
 
